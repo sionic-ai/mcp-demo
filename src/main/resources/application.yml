@@ -10,3 +10,22 @@ logging:
 
 server:
   port: 8080
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local_postgres
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mcp_demo_db
+    username: postgres
+    password: password1
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
