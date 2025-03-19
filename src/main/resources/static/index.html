@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL 단축기 관리자</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .form-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #0066cc;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #0055aa;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #bd2130;
+        }
+        .message {
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            color: #333;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td {
+            border-top: 1px solid #ddd;
+        }
+        .url-cell {
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>URL 단축기 관리자</h1>
+        
+        <div>
+            <div class="form-group">
+                <input type="text" id="urlInput" class="form-input" placeholder="단축할 URL을 입력하세요">
+                <button id="shortenBtn" class="btn btn-primary">단축하기</button>
+            </div>
+            <div id="message" class="message" style="display: none;"></div>
+        </div>
+        
+        <div>
+            <div id="loading" style="display: none;">로딩 중...</div>
+            <div id="emptyMessage" style="display: none;">저장된 URL이 없습니다.</div>
+            <table id="urlTable">
+                <thead>
+                    <tr>
+                        <th>단축 키</th>
+                        <th>원본 URL</th>
+                        <th>생성 시간</th>
+                        <th>작업</th>
+                    </tr>
+                </thead>
+                <tbody id="urlList"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = '/api/shorten';
+        let messageTimeout;
+
+        function showMessage(text, duration = 5000) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.style.display = 'block';
+            
+            if (messageTimeout) {
+                clearTimeout(messageTimeout);
+            }
+            
+            messageTimeout = setTimeout(() => {
+                messageEl.style.display = 'none';
+            }, duration);
+        }
+
+        function setLoading(isLoading) {
+            document.getElementById('loading').style.display = isLoading ? 'block' : 'none';
+            document.getElementById('shortenBtn').disabled = isLoading;
+        }
+
+        async function fetchUrls() {
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_BASE_URL}/urls`);
+                if (!response.ok) {
+                    throw new Error('서버에서 URL 목록을 가져오는데 실패했습니다.');
+                }
+                
+                const urls = await response.json();
+                renderUrlList(urls);
+            } catch (error) {
+                console.error('Error fetching URLs:', error);
+                showMessage(`오류: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        function renderUrlList(urls) {
+            const listEl = document.getElementById('urlList');
+            const tableEl = document.getElementById('urlTable');
+            const emptyEl = document.getElementById('emptyMessage');
+            
+            listEl.innerHTML = '';
+            
+            if (urls.length === 0) {
+                tableEl.style.display = 'none';
+                emptyEl.style.display = 'block';
+                return;
+            }
+            
+            tableEl.style.display = 'table';
+            emptyEl.style.display = 'none';
+            
+            urls.forEach(url => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td>${url.shortKey}</td>
+                    <td class="url-cell" title="${url.originalUrl}">${url.originalUrl}</td>
+                    <td>${url.createdAt}</td>
+                    <td>
+                        <button class="btn btn-danger delete-btn" data-key="${url.shortKey}">삭제</button>
+                    </td>
+                `;
+                
+                listEl.appendChild(row);
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const key = this.dataset.key;
+                    deleteUrl(key);
+                });
+            });
+        }
+
+        async function shortenUrl() {
+            const inputEl = document.getElementById('urlInput');
+            const url = inputEl.value.trim();
+            
+            if (!url) {
+                showMessage('URL을 입력해주세요.');
+                return;
+            }
+            
+            setLoading(true);
+            try {
+                const response = await fetch(API_BASE_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ url })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('URL 단축에 실패했습니다.');
+                }
+                
+                const result = await response.json();
+                showMessage(`URL이 성공적으로 단축되었습니다: ${result.shortUrl}`);
+                inputEl.value = '';
+                fetchUrls();
+            } catch (error) {
+                console.error('Error shortening URL:', error);
+                showMessage(`오류: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function deleteUrl(shortKey) {
+            if (!confirm(`"${shortKey}" URL을 정말 삭제하시겠습니까?`)) {
+                return;
+            }
+            
+            setLoading(true);
+            try {
+                const response = await fetch(`${API_BASE_URL}/${shortKey}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('URL 삭제에 실패했습니다.');
+                }
+                
+                showMessage('URL이 성공적으로 삭제되었습니다.');
+                fetchUrls();
+            } catch (error) {
+                console.error('Error deleting URL:', error);
+                showMessage(`오류: ${error.message}`);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('shortenBtn').addEventListener('click', shortenUrl);
+            document.getElementById('urlInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    shortenUrl();
+                }
+            });
+            
+            fetchUrls();
+        });
+    </script>
+</body>
+</html>
