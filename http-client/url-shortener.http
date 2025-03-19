@@ -1,0 +1,16 @@
+### 단축 URL 생성
+POST http://localhost:8080/api/shorten
+Content-Type: application/json
+
+{
+  "url": "https://www.example.com/very/long/url/that/needs/to/be/shortened3"
+}
+
+### 원본 URL 조회 (단축 키를 실제 생성된 값으로 바꿔주세요)
+GET http://localhost:8080/api/shorten/abcdef
+
+### 모든 단축 URL 목록 조회
+GET http://localhost:8080/api/shorten/urls
+
+### 단축 URL 삭제 (단축 키를 실제 생성된 값으로 바꿔주세요)
+DELETE http://localhost:8080/api/shorten/abcdef
