@@ -1,6 +1,6 @@
 package ai.sionic.mcpdemo.controller
 
-import ai.sionic.mcpdemo.repository.UrlEntity
+import ai.sionic.mcpdemo.model.UrlEntity
 import ai.sionic.mcpdemo.service.UrlShortenerService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity

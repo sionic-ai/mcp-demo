@@ -1,6 +1,6 @@
 package ai.sionic.mcpdemo.service
 
-import ai.sionic.mcpdemo.repository.UrlEntity
+import ai.sionic.mcpdemo.model.UrlEntity
 import ai.sionic.mcpdemo.repository.UrlRepository
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
