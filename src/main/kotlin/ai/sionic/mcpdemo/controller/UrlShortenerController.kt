@@ -1,16 +1,17 @@
 package ai.sionic.mcpdemo.controller
 
-import ai.sionic.mcpdemo.model.UrlEntity
 import ai.sionic.mcpdemo.service.UrlShortenerService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
+import java.time.format.DateTimeFormatter
 
 @RestController
 @RequestMapping("/api/shorten")
 class UrlShortenerController(private val urlShortenerService: UrlShortenerService) {
     private val logger = KotlinLogging.logger {}
+    private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
     @PostMapping
     fun shortenUrl(@RequestBody request: ShortenUrlRequest): ResponseEntity<ShortenUrlResponse> {
@@ -44,9 +45,16 @@ class UrlShortenerController(private val urlShortenerService: UrlShortenerServic
     }
 
     @GetMapping("/urls")
-    fun getAllUrls(): ResponseEntity<List<UrlEntity>> {
+    fun getAllUrls(): ResponseEntity<List<UrlDto>> {
         logger.info { "Received request to get all shortened URLs" }
         val urls = urlShortenerService.getAllUrls()
+            .map { 
+                UrlDto(
+                    it.shortKey,
+                    it.originalUrl,
+                    it.createdAt.format(dateFormatter)
+                )
+            }
         return ResponseEntity.ok(urls)
     }
 
@@ -63,3 +71,9 @@ data class ShortenUrlRequest(val url: String)
 data class ShortenUrlResponse(val shortUrl: String, val shortKey: String)
 
 data class RedirectResponse(val originalUrl: String)
+
+data class UrlDto(
+    val shortKey: String,
+    val originalUrl: String,
+    val createdAt: String
+)
