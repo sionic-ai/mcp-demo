@@ -1,1 +1,12 @@
-spring.application.name=mcp-demo
+spring:
+  application:
+    name: mcp-demo
+  profiles:
+    active: local
+
+logging:
+  level:
+    ai.sionic.mcpdemo: INFO
+
+server:
+  port: 8080
