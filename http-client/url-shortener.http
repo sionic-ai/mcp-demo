@@ -3,7 +3,7 @@ POST http://localhost:8080/api/shorten
 Content-Type: application/json
 
 {
-  "url": "https://www.example.com/very/long/url/that/needs/to/be/shortened3"
+  "url": "https://www.example.com/very/long/url/that/needs/to/be/shortened5"
 }
 
 ### 원본 URL 조회 (단축 키를 실제 생성된 값으로 바꿔주세요)

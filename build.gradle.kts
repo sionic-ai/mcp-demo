@@ -20,9 +20,23 @@ repositories {
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-jdbc")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
+    
+    // Exposed
+    implementation("org.jetbrains.exposed:exposed-core:0.48.0")
+    implementation("org.jetbrains.exposed:exposed-dao:0.48.0")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.48.0")
+    implementation("org.jetbrains.exposed:exposed-java-time:0.48.0")
+    
+    // PostgreSQL
+    implementation("org.postgresql:postgresql:42.7.2")
+    
+    // Connection pool
+    implementation("com.zaxxer:HikariCP:5.1.0")
+    
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
