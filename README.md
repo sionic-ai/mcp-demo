@@ -29,7 +29,6 @@
 - local_postgres env 일 때는 exposed 를 쓰고 싶어. dependency 추가 해줘
 - local_postgres env 에 쓰일 db 는 이미 docker-compose 로 띄워져 있어
 - 접속 정보는 docker/docker-compose.yml 가면 있어
-
 - src/main/resources/application.yml 에 env 추가
 - local env: 현재 in-memory hashmap 사용 유지
 - local_postgres env: Exposed 를 사용하여 PostgreSQL DB 연결
