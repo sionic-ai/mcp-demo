@@ -3,6 +3,10 @@
 > Model Context Protocol (MCP) 은 LLM 애플리케이션과 외부 데이터 소스 및 도구들 간의 원활한 통합을 가능하게 하는 개방형 프로토콜입니다. AI 기반 IDE, 채팅 인터페이스, 커스텀 AI
 > 워크플로우 등에서 LLM 이 필요한 컨텍스트와 연결하기 위한 표준화된 방법을 제공합니다.
 
+[한국어 README](https://github.com/sionic-ai/mcp-demo/tree/ko)  
+[English README](https://github.com/sionic-ai/mcp-demo)  
+[日本語 README](https://github.com/sionic-ai/mcp-demo/tree/ja)
+
 ### step 0: MCP 연동
 
 [mcp-jetbrains github](https://github.com/JetBrains/mcp-jetbrains#)
