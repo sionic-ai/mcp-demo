@@ -5,6 +5,10 @@
 > It provides a standardized method for connecting LLMs with necessary context in AI-based IDEs, chat interfaces, custom
 > AI workflows, and more.
 
+[한국어 README](https://github.com/sionic-ai/mcp-demo/tree/ko)  
+[English README](https://github.com/sionic-ai/mcp-demo)  
+[日本語 README](https://github.com/sionic-ai/mcp-demo/tree/ja)
+
 ### Step 0: MCP Integration
 
 [mcp-jetbrains github](https://github.com/JetBrains/mcp-jetbrains#)
